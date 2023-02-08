@@ -23,7 +23,6 @@ const insertTodoIntoDOM = (inputValue) => {
   `;
   count++;
 };
-
 const filterTodos = (inputValue) => {
   Array.from(todoListContainer.children).forEach((todo) => {
     todo.textContent.toLocaleLowerCase().includes(inputValue)
@@ -31,14 +30,20 @@ const filterTodos = (inputValue) => {
       : (todo.classList.remove("d-flex"), todo.classList.add("hidden"));
   });
 };
-
 const removeTodoFromDOM = (event) => {
   if (event.target.dataset.id === "removeTodo") {
     const li = event.target.closest("li");
     li.remove();
   }
 };
-
+const editTodo = (event) => {
+  const textEditTodo = document.querySelector(".textEditTodo").value;
+  const liReference = event.target.closest("button").dataset.liReference;
+  const li = document.querySelector(`[data-id='${liReference}'] span`);
+  li.textContent = textEditTodo;
+  modal.classList.remove("show");
+  return;
+};
 const openEditForm = (event) => {
   modal.classList.add("show");
   const textContentEditTodo = event.target.closest("li").textContent.trim();
@@ -56,12 +61,14 @@ addTodoForm.addEventListener("submit", (event) => {
   inputValue ? insertTodoIntoDOM(inputValue) : "undefined";
   event.target.reset();
 });
-
 formSearchTodo.addEventListener("input", (event) => {
   const inputValue = event.target.value.trim().toLowerCase();
   filterTodos(inputValue);
 });
-
+sendEditTodo.addEventListener("click", (event) => {
+  event.preventDefault();
+  editTodo(event);
+});
 todoListContainer.addEventListener("click", (event) => {
   const clickedRemoveButton = event.target.classList.contains("fa-trash-can");
   const clickedEditButton = event.target.classList.contains("fa-edit");
@@ -73,17 +80,4 @@ todoListContainer.addEventListener("click", (event) => {
     openEditForm(event);
     return;
   }
-});
-
-const editTodo = (event) => {
-  const textEditTodo = document.querySelector(".textEditTodo").value;
-  const liReference = event.target.closest("button").dataset.liReference;
-  const li = document.querySelector(`[data-id='${liReference}'] span`);
-  li.textContent = textEditTodo;
-  modal.classList.remove("show");
-};
-
-sendEditTodo.addEventListener("click", (event) => {
-  event.preventDefault();
-  editTodo(event);
 });
